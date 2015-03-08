@@ -39,8 +39,12 @@
     if ([self.manager isGyroAvailable] && [self.manager isGyroActive] == NO) {
         [self startGryoUpdate];
     }
+    if ([self.manager isAccelerometerAvailable] && [self.manager isAccelerometerActive] == NO) {
+        [self startAccelerometerUpdate];
+    }
 }
 
+#pragma mark - GYROSCOPE
 - (void)startGryoUpdate{
     [self.manager setGyroUpdateInterval:0.01f];
     [self.manager startGyroUpdatesToQueue:[NSOperationQueue mainQueue]
@@ -64,6 +68,34 @@
     self.gX.text = [NSString stringWithFormat:@"X: %f", x];
     self.gY.text = [NSString stringWithFormat:@"Y: %f", y];
     self.gZ.text = [NSString stringWithFormat:@"Z: %f", z];
+}
+
+#pragma mark - ACCELEROMETER
+
+- (void)startAccelerometerUpdate{
+    [self.manager setAccelerometerUpdateInterval:0.01f];
+    [self.manager startAccelerometerUpdatesToQueue:[NSOperationQueue mainQueue]
+                                       withHandler:^(CMAccelerometerData *accelerometerData, NSError *error) {
+                                           if (!error) {
+                                               [self processAccelData:accelerometerData];
+                                           }
+                                           else {
+                                               NSLog(@"ERROR:\n%@", [error userInfo]);
+                                           }
+    }];
+}
+
+- (void)processAccelData:(CMAccelerometerData *)data{
+    double x = data.acceleration.x;
+    double y = data.acceleration.y;
+    double z = data.acceleration.z;
+    [self updateViewWithNewAccelDataX:x Y:y Z:z];
+}
+
+- (void)updateViewWithNewAccelDataX:(double)x Y:(double)y Z:(double)z{
+    self.aX.text = [NSString stringWithFormat:@"X: %f", x];
+    self.aY.text = [NSString stringWithFormat:@"Y: %f", y];
+    self.aZ.text = [NSString stringWithFormat:@"Z: %f", z];
 }
 
 - (void)didReceiveMemoryWarning {
