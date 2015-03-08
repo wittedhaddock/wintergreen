@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #import <CoreMotion/CoreMotion.h>
 
-@interface ViewController ()
+@interface ViewController () <NSCoding>
 @property (strong, nonatomic) CMMotionManager *manager;
 
 //gyro
@@ -22,6 +22,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *aY;
 @property (weak, nonatomic) IBOutlet UILabel *aZ;
 
+@property (strong, nonatomic) NSMutableArray *aggregateData;
+
 @end
 
 @implementation ViewController
@@ -31,6 +33,13 @@
         _manager = [[CMMotionManager alloc] init];
     }
     return _manager;
+}
+
+- (NSMutableArray *)aggregateData{
+    if (!_aggregateData) {
+        _aggregateData = [NSMutableArray array];
+    }
+    return _aggregateData;
 }
 
 - (void)viewDidLoad {
@@ -68,6 +77,18 @@
     self.gX.text = [NSString stringWithFormat:@"X: %f", x];
     self.gY.text = [NSString stringWithFormat:@"Y: %f", y];
     self.gZ.text = [NSString stringWithFormat:@"Z: %f", z];
+    
+    
+    
+#warning what a terrible pattern this is...wonder how the mainQueue handles both data streams, and whether their invocation time can be mapped to real system time
+    [self bundleData];
+}
+
+- (void)bundleData{
+    NSString *gyro = [NSString stringWithFormat:@"%@, %@, %@", self.gX.text, self.gY.text, self.gZ.text];
+    NSString *accel = [NSString stringWithFormat:@"%@, %@, %@", self.aX.text, self.aY.text, self.aZ.text];
+    NSString *amalgamate = [NSString stringWithFormat:@"G: %@ A: %@ D: %@", gyro, accel, [NSDate date]];
+    [self.aggregateData addObject:amalgamate];
 }
 
 #pragma mark - ACCELEROMETER
@@ -101,6 +122,45 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - ENCODING
+#define GYRO_ROTATION_RATE_X_KEY @"gX"
+#define GYRO_ROTATION_RATE_Y_KEY @"gY"
+#define GYRO_ROTATION_RATE_Z_KEY @"gZ"
+
+#define ACCEL_ACCELERATION_X_KEY @"aX"
+#define ACCEL_ACCELERATION_Y_KEY @"aY"
+#define ACCEL_ACCELERATION_Z_KEY @"aZ"
+
+- (BOOL)createDataPath {
+    
+
+    
+    NSError *error;
+    BOOL success = [[NSFileManager defaultManager] createDirectoryAtPath:@"./" withIntermediateDirectories:YES attributes:nil error:&error];
+    if (!success) {
+        NSLog(@"Error creating data path: %@", [error localizedDescription]);
+    }
+    return success;
+    
+}
+
+- (void)saveData {
+    
+    [self createDataPath];
+    
+    NSString *dataPath = @"./data.plist";
+    for (NSString *indexer in self.aggregateData) {
+        NSMutableData *data = [[NSMutableData alloc] initWithData:[indexer dataUsingEncoding:NSUTF8StringEncoding]];
+        NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
+        [archiver finishEncoding];
+        [data writeToFile:dataPath atomically:YES];
+    }
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+    [self saveData];
 }
 
 @end
