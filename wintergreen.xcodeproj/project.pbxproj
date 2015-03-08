@@ -14,6 +14,7 @@
 		1A8065321AACDA1400A29644 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A8065311AACDA1400A29644 /* Images.xcassets */; };
 		1A8065351AACDA1400A29644 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A8065331AACDA1400A29644 /* LaunchScreen.xib */; };
 		1A8065411AACDA1400A29644 /* wintergreenTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A8065401AACDA1400A29644 /* wintergreenTests.m */; };
+		1A80654B1AACE2CD00A29644 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A80654A1AACE2CD00A29644 /* CoreMotion.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +41,7 @@
 		1A80653A1AACDA1400A29644 /* wintergreenTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = wintergreenTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A80653F1AACDA1400A29644 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A8065401AACDA1400A29644 /* wintergreenTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = wintergreenTests.m; sourceTree = "<group>"; };
+		1A80654A1AACE2CD00A29644 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,6 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A80654B1AACE2CD00A29644 /* CoreMotion.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +66,7 @@
 		1A8065181AACDA1300A29644 = {
 			isa = PBXGroup;
 			children = (
+				1A80654A1AACE2CD00A29644 /* CoreMotion.framework */,
 				1A8065231AACDA1400A29644 /* wintergreen */,
 				1A80653D1AACDA1400A29644 /* wintergreenTests */,
 				1A8065221AACDA1400A29644 /* Products */,
