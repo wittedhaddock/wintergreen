@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import <CoreMotion/CoreMotion.h>
+#include <sys/time.h>
 
 @interface ViewController () <NSCoding>
 @property (strong, nonatomic) CMMotionManager *manager;
@@ -87,7 +88,11 @@
 - (void)bundleData{
     NSString *gyro = [NSString stringWithFormat:@"%@, %@, %@", self.gX.text, self.gY.text, self.gZ.text];
     NSString *accel = [NSString stringWithFormat:@"%@, %@, %@", self.aX.text, self.aY.text, self.aZ.text];
-    NSString *amalgamate = [NSString stringWithFormat:@"G: %@ A: %@ D: %@", gyro, accel, [NSDate date]];
+    struct timeval time;
+    gettimeofday(&time, NULL);
+    long millis = (time.tv_sec * 1000) +(time.tv_usec / 1000);
+    NSString *amalgamate = [NSString stringWithFormat:@"G: %@ A: %@ T: %ld", gyro, accel, millis];
+    NSLog(@"%@", amalgamate);
     [self.aggregateData addObject:amalgamate];
 }
 
@@ -133,29 +138,30 @@
 #define ACCEL_ACCELERATION_Y_KEY @"aY"
 #define ACCEL_ACCELERATION_Z_KEY @"aZ"
 
-- (BOOL)createDataPath {
-    
 
+
++ (NSString *)getPrivateDocsDir {
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    documentsDirectory = [documentsDirectory stringByAppendingPathComponent:@"Private Documents"];
     
     NSError *error;
-    BOOL success = [[NSFileManager defaultManager] createDirectoryAtPath:@"./" withIntermediateDirectories:YES attributes:nil error:&error];
-    if (!success) {
-        NSLog(@"Error creating data path: %@", [error localizedDescription]);
-    }
-    return success;
+    [[NSFileManager defaultManager] createDirectoryAtPath:documentsDirectory withIntermediateDirectories:YES attributes:nil error:&error];
+    NSLog(@"%@", documentsDirectory);
+    return documentsDirectory;
     
 }
 
 - (void)saveData {
     
-    [self createDataPath];
     
     NSString *dataPath = @"./data.plist";
     for (NSString *indexer in self.aggregateData) {
         NSMutableData *data = [[NSMutableData alloc] initWithData:[indexer dataUsingEncoding:NSUTF8StringEncoding]];
         NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
         [archiver finishEncoding];
-        [data writeToFile:dataPath atomically:YES];
+        [data writeToFile:[ViewController getPrivateDocsDir] atomically:YES];
     }
 }
 
