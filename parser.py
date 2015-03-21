@@ -17,7 +17,7 @@ def main():
     return
   else:
     formatAndWriteToDBWithFileWithHumansName(file, human_name)
-    print "worked!"
+    print "working..."
   print "Finished!"
 
 def formatAndWriteToDBWithFileWithHumansName(file, name_of_human):
@@ -30,35 +30,19 @@ def formatAndWriteToDBWithFileWithHumansName(file, name_of_human):
   for line in file:
     match = re.findall(r"([XYZT]: [\w\-\.\d]+)", line)
     should_interpret_point_as_gyroscope = False #assumes gryo precedes accelerometer data
-    for point in match:
-      if "X" in point.split()[0]:
-        should_interpret_point_as_gyroscope = not should_interpret_point_as_gyroscope
-      if "T" in point.split()[0]:
-        continue
-      time = match[len(match) - 1]
-      handleDataPointWithConnectionAndFlagForGyroOrAccelWithTimestamp(point, connection, should_interpret_point_as_gyroscope, time)
+
+    g_x = match[0].split()[1]
+    g_y = match[1].split()[1]
+    g_z = match[2].split()[1]
+    a_x = match[3].split()[1]
+    a_y = match[4].split()[1]
+    a_z = match[5].split()[1]
+    tim = match[6].split()[1]
+    connection.execute("""INSERT INTO data (g_x, g_y, g_z, a_x, a_y, a_z, milliseconds) 
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)""" % (g_x, g_y, g_z, a_x, a_y, a_z, tim))
+
   connection.commit()
   connection.close()
-
-def handleDataPointWithConnectionAndFlagForGyroOrAccelWithTimestamp(point, conn, flag_as_gyro, timestamp):
-  #print point + " " + str(flag_as_gyro) + " " + timestamp
-  #GOING FOR READABILITY OVER DRY-ABILITY
-  #EXPLICATING ALL SIX CASES (3 points, gyro and accel 2 * 3 = 6)
-  value = point.split()[1]
-
-  if "X" in point and flag_as_gyro: #gyroscope x value
-    conn.execute("INSERT INTO data (g_x) VALUES (%s)" % value)
-  if "Y" in point and flag_as_gyro:     #gyroscope y value
-    conn.execute("INSERT INTO data (g_y) VALUES (%s)" % value)
-  if "Z" in point and flag_as_gyro:     #gyroscope z value
-    conn.execute("INSERT INTO data (g_z) VALUES (%s)" % value)
-
-  if "X" in point and not flag_as_gyro: #accelerometer x value
-    conn.execute("INSERT INTO data (a_x) VALUES (%s)" % value)
-  if "Y" in point and not flag_as_gyro: #accelerometer y value
-    conn.execute("INSERT INTO data (a_y) VALUES (%s)" % value)
-  if "Z" in point and not flag_as_gyro: #accelerometer z value
-    conn.execute("INSERT INTO data (a_z) VALUES (%s)" % value)
 
 
 if __name__ == '__main__':
