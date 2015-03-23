@@ -16,7 +16,7 @@ def main():
     print "cannot read file... corrupted?"
     return
   else:
-    formatAndWriteToDBWithFileWithHumansName(file, human_name)
+    formatAndWriteToDBWithFileWithHumansName(file, str(human_name))
     print "working..."
   print "Finished!"
 
@@ -24,7 +24,7 @@ def formatAndWriteToDBWithFileWithHumansName(file, name_of_human):
   connection = sqlite3.connect(r"./device_data.db")
   cursor = connection.cursor()
   cursor.execute("""
-                  CREATE TABLE IF NOT EXISTS data (name text, milliseconds, g_x, g_y, g_z, a_x, a_y, a_z)
+                  CREATE TABLE IF NOT EXISTS data (name, milliseconds, g_x, g_y, g_z, a_x, a_y, a_z)
                  """)
   #insert data
   for line in file:
