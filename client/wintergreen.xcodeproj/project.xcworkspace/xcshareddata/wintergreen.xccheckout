@@ -14,11 +14,11 @@
 		<string>https://github.com/wittedhaddock/wintergreen.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>wintergreen.xcodeproj</string>
+	<string>client/wintergreen.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>88FA2EBB08662BD6F9850529FBA09D1BA7B674E7</key>
-		<string>../..</string>
+		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/wittedhaddock/wintergreen.git</string>
