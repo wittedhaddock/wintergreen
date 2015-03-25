@@ -24,7 +24,7 @@ def formatAndWriteToDBWithFileWithHumansName(file, name_of_human):
   connection = sqlite3.connect(r"./device_data.db")
   cursor = connection.cursor()
   cursor.execute("""
-                  CREATE TABLE IF NOT EXISTS data (name text, milliseconds, g_x, g_y, g_z, a_x, a_y, a_z)
+                  CREATE TABLE IF NOT EXISTS data (name text, milliseconds float, g_x float, g_y float, g_z float, a_x float, a_y float, a_z float)
                  """)
   #insert data
   for line in file:
