@@ -92,9 +92,9 @@ def nonDefinitiveDiscernmentsOfProbabilityDistribution(predicted_probs):
     amalgamate = []
     for i, val in enumerate(predicted_probs):
         for j in val:
-            if j == 1 or j == 0:
+            if j != 1 and j != 0:
+                amalgamate.append((i, val))
                 break
-            amalgamate.append((i, val))
     return amalgamate
 
 number_correct = len(response_df_test[response_df_test == response_prediction]) 
