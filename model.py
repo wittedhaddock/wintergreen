@@ -72,8 +72,7 @@ response_df_test = response_df.ix[test_indices,]
 explanatory_df_test = explanatory_df.ix[test_indices,]
 
 
-Jon_df = df[df.name == "JonBlum"]
-James_df = df[df.name == "James"]
+
 
 knn = KNeighborsClassifier(n_neighbors = 9)
 knn.fit(explanatory_df_train, response_df_train)
@@ -87,11 +86,24 @@ gscv.fit(explanatory_df, response_df)
 gscv.best_estimator_
 
 response_prediction = knn.predict(explanatory_df_test)
+response_predicted_prob = knn.predict_proba(explanatory_df_test)
+
+def nonDefinitiveDiscernmentsOfProbabilityDistribution(predicted_probs):
+    amalgamate = []
+    for i, val in enumerate(predicted_probs):
+        for j in val:
+            if j == 1 or j == 0:
+                break
+            amalgamate.append((i, val))
+    return amalgamate
+
 number_correct = len(response_df_test[response_df_test == response_prediction]) 
 total_number = len(response_df_test)
 accuracy = number_correct / total_number
 
-
-jj_d = {"James X Rotation" : James_df.g_x, "Jon X Rotation" : Jon_df.g_x, "James Y Rotationn" : James_df.g_y, "Jon y Rotation" : Jon_df.g_y}
+#crude visualization
+Jon_df = df[df.name == "JonBlum"]
+James_df = df[df.name == "James"]
+jj_d = {"James X Rotation" : James_df.g_x, "Jon X Rotation" : Jon_df.g_x, "James Y Rotation" : James_df.g_y, "Jon y Rotation" : Jon_df.g_y}
 jj_df = pandas.DataFrame(data=jj_d, index = range(len(time_series)))
 jj_df.plot()
