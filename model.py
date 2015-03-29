@@ -25,7 +25,7 @@ SELECT * FROM data
 
 """
 df = pandas.read_sql(query, connection)
-df.nam
+df.name
 connection.close()
 x_ind = df.milliseconds
 x_ind.plot()
@@ -39,6 +39,8 @@ for name in df.name:
         name_int_series.append(1)
     if name == "JonBlum":
         name_int_series.append(2)
+    if name == "Andrew":
+        name_int_series.append(3)
 ni_series = pandas.Series(data = name_int_series, index = df.index)
 
 g_d = {"g_x" : df.g_x, "g_y" : df.g_y, "g_z" : df.g_z}
@@ -55,6 +57,7 @@ holdout_number = round(len(df) * 0.2, 0) #save 1/5 for cross validation
 response_df_unfilled = df.name
 response_df = response_df_unfilled.replace(to_replace="James", value = 1, inplace=False)
 response_df = response_df.replace(to_replace="JonBlum", value = 2, inplace = False)
+response_df = response_df.replace(to_replace="Andrew", value = 3, inplace = False)
 
 explanatory_df = df[["g_x", "g_y", "g_z", "a_x", "a_y", "a_z"]]
 
