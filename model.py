@@ -14,6 +14,7 @@ from sklearn.neighbors import KNeighborsClassifier
 import statsmodels.formula.api as smf
 import matplotlib.pyplot as plt
 import numpy as np
+import sklearn.grid_search as gs
 
 
 connection = sqlite3.connect("./device_data.db")
@@ -62,8 +63,9 @@ test_indices = numpy.random.choice(df.index, holdout_number, replace = False)
 train_indices = df[~df.index.isin(test_indices)]
 
 
-#find out for certain what the difference between indexing without the end comma stoccato 
+#find out for certain what the difference between indexing without the end comma stoccato       
 response_df_train = response_df.ix[response_df.index,]
+test = response_df.ix[response_df.index]
 explanatory_df_train = explanatory_df.ix[response_df.index,]
 
 response_df_test = response_df.ix[test_indices,]
@@ -73,10 +75,16 @@ explanatory_df_test = explanatory_df.ix[test_indices,]
 Jon_df = df[df.name == "JonBlum"]
 James_df = df[df.name == "James"]
 
-knn = KNeighborsClassifier()
-
-
+knn = KNeighborsClassifier(n_neighbors = 9)
 knn.fit(explanatory_df_train, response_df_train)
+
+neighbor_span = range(1, 30)
+param_grid = dict(n_neighbors = neighbor_span)
+
+gscv = gs.GridSearchCV(knn, param_grid = param_grid, cv = 50, scoring="accuracy")
+gscv.fit(explanatory_df, response_df)
+
+gscv.best_estimator_
 
 response_prediction = knn.predict(explanatory_df_test)
 number_correct = len(response_df_test[response_df_test == response_prediction]) 
