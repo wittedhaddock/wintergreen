@@ -26,6 +26,9 @@ SELECT * FROM data
 """
 df = pandas.read_sql(query, connection)
 df.name
+explanatory_header_names = ["g_x", "g_y", "g_z", "a_x", "a_y", "a_z"]
+fresh_df = df[df.milliseconds > 1796810550]
+explanatory_fresh_df = fresh_df[explanatory_header_names]
 connection.close()
 x_ind = df.milliseconds
 x_ind.plot()
@@ -59,7 +62,7 @@ response_df = response_df_unfilled.replace(to_replace="James", value = 1, inplac
 response_df = response_df.replace(to_replace="JonBlum", value = 2, inplace = False)
 response_df = response_df.replace(to_replace="Andrew", value = 3, inplace = False)
 
-explanatory_df = df[["g_x", "g_y", "g_z", "a_x", "a_y", "a_z"]]
+explanatory_df = df[explanatory_header_names]
 
 
 test_indices = numpy.random.choice(df.index, holdout_number, replace = False)
@@ -79,7 +82,11 @@ explanatory_df_test = explanatory_df.ix[test_indices,]
 
 knn = KNeighborsClassifier(n_neighbors = 9)
 knn.fit(explanatory_df_train, response_df_train)
+response = knn.predict(explanatory_fresh_df)
+correct_array = [1,] * len(response)
 
+number_correct = len(response[response == correct_array])
+percent_correct = number_correct / len(response)
 neighbor_span = range(1, 30)
 param_grid = dict(n_neighbors = neighbor_span)
 
