@@ -26,8 +26,8 @@ SELECT * FROM data
 """
 df = pandas.read_sql(query, connection)
 df.name
-explanatory_header_names = ["g_x", "g_y", "g_z", "a_x", "a_y", "a_z"]
-fresh_df = df[df.milliseconds > 1796810550]
+explanatory_header_names = ["milliseconds", "g_x", "g_y", "g_z", "a_x", "a_y", "a_z"]
+fresh_df = df
 explanatory_fresh_df = fresh_df[explanatory_header_names]
 connection.close()
 x_ind = df.milliseconds
@@ -54,7 +54,7 @@ a_df = pandas.DataFrame(data=a_d, index=range(len(time_series)))
 
 df.plot()
 
-holdout_number = round(len(df) * 0.2, 0) #save 1/5 for cross validation
+holdout_number = round(len(df) * 0.8, 0) #save 1/5 for cross validation
 
 #WARNING: IMPLEMENTATION ASSUMES UNIFORM DISTRUBTION WHEN TIME SERIES IS NOT UNIFORM. RESULTS ARE SKEWED.
 response_df_unfilled = df.name
@@ -90,10 +90,10 @@ percent_correct = number_correct / len(response)
 neighbor_span = range(1, 30)
 param_grid = dict(n_neighbors = neighbor_span)
 
-gscv = gs.GridSearchCV(knn, param_grid = param_grid, cv = 50, scoring="accuracy")
-gscv.fit(explanatory_df, response_df)
+#gscv = gs.GridSearchCV(knn, param_grid = param_grid, cv = 50, scoring="accuracy")
+#gscv.fit(explanatory_df, response_df)
 
-gscv.best_estimator_
+#gscv.best_estimator_
 
 response_prediction = knn.predict(explanatory_df_test)
 response_predicted_prob = knn.predict_proba(explanatory_df_test)
