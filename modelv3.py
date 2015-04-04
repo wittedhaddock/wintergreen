@@ -17,6 +17,12 @@ import sklearn.grid_search as gs
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 
+#TODO
+#organize by person, individuated by session
+#train on multiple user sessions to "learn person" agnostic their session
+#Develop confidence interval to describe probability of "this is the person I was trained to know"
+#test, iterate, remove all assumptions, hypothesize, test, iterate, repeat x 1000000
+
 connection = sqlite3.connect("./device_data.db")
 
 query = """
@@ -47,6 +53,7 @@ for i in set(df.name):
 
 def createDictIndexedByTimeFromDataFrameIndexedUniformly(dataframe):
     resultantDictionary = dict()
+   
     for i in dataframe.values:
         resultantDictionary[i[1]] = [j for j in i if j != i[1]]
     return resultantDictionary
@@ -54,5 +61,6 @@ def createDictIndexedByTimeFromDataFrameIndexedUniformly(dataframe):
 timeKeyedDict = createDictIndexedByTimeFromDataFrameIndexedUniformly(df)
 
 df3 = pandas.DataFrame(data=timeKeyedDict)
-df3.plot()
+df3 = df3.T #columns are attributes, rows indexed by time
 
+gx_fft = numpy.fft.fft(df3[[1]])
