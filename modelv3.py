@@ -138,3 +138,19 @@ plt.show()
 ##check that eigen vector magnitude is one (actually checking close to, rather than absolute, due to rounding error)
 for ev in eig_vec_cov:
     np.testing.assert_almost_equal(1.0, np.linalg.norm(ev))
+    
+
+eigen_pairs = [(np.abs(eig_val_cov[i]), eig_vec_cov[:,i]) for i in range(len(eig_vec_cov))]  #wondering about the absolute value
+eigen_pairs.sort()
+eigen_pairs.reverse()
+
+for i in eigen_pairs:
+    print i[0]
+    
+#transformation onto subspace
+#via   y = W(Transposed) * x
+top3Matrix = np.hstack((eigen_pairs[0][1].reshape(6, 1), eigen_pairs[1][1].reshape(6, 1), eigen_pairs[2][1].reshape(6, 1)))
+transformed_data = top3Matrix.T.dot(df[["g_x", "g_y", "g_z", "a_x", "a_y", "a_z"]].T)
+transformed_data[:,:10]
+
+
